@@ -1,0 +1,334 @@
+
+:root{--ink:#354235;--cream:#f6edcf;--paper:#fff8e5;--green:#59764d;--deep:#304d3d;--gold:#c9a45e;--pink:#d99b8a;--shadow:0 8px 22px #1b332b55}
+*{box-sizing:border-box}body{margin:0;color:var(--ink);font-family:Georgia,serif;background:#31594b;overflow-x:hidden}
+#world{min-height:100vh;background-image:linear-gradient(#183b2922,#183b2922),url("assets/forest-background.jpg");background-size:cover;background-position:center top;background-attachment:fixed;position:relative;transition:background-size .2s}
+#world:after{content:"";position:fixed;inset:0;pointer-events:none;background:radial-gradient(circle at 12% 18%,#fff8c433 0 2px,transparent 3px),radial-gradient(circle at 70% 44%,#fff8c433 0 2px,transparent 3px);background-size:120px 160px;animation:sparkle 18s linear infinite}
+@keyframes sparkle{to{background-position:0 -320px}}
+.top{position:sticky;top:0;z-index:20;display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 16px;background:#294638eF;color:#fff4d5;border-bottom:3px solid #c6a56b;box-shadow:0 3px 12px #17291f66}
+.logo{font-size:clamp(19px,3vw,27px);font-weight:bold;letter-spacing:2px}.logo small{display:block;font-size:9px;letter-spacing:2px;color:#d8d6a7}
+.hud{display:flex;gap:6px;align-items:center;flex-wrap:wrap}.hud button,.pill{border:1px solid #e2c78a;background:#f5e8c4;color:#3d503e;border-radius:20px;padding:7px 11px;font-size:12px;cursor:pointer}
+button{font-family:inherit;cursor:pointer;transition:transform .15s,filter .15s}button:hover{transform:translateY(-2px);filter:brightness(1.05)}button:active{transform:translateY(1px)}
+#mapview{max-width:1200px;margin:auto;min-height:calc(100vh - 60px);position:relative;padding:24px 16px 50px}
+.welcome{max-width:440px;background:#fff6dfed;border:2px solid #987e52;border-radius:16px;padding:13px 16px;box-shadow:var(--shadow);margin:8px auto 24px;text-align:center}
+.welcome h1{font-size:clamp(20px,4vw,29px);margin:0 0 4px}.welcome p{font-size:13px;margin:0;color:#65745a}
+.places{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(8px,2vw,18px);max-width:850px;margin:0 auto}
+.place{min-height:138px;border:2px solid #6c6244;border-radius:18px;background:linear-gradient(145deg,#f9efcfed,#e5d4a9ed);box-shadow:0 6px 0 #594d36,0 12px 22px #18352666;padding:12px 8px;text-align:center;color:#3b4c39;position:relative;overflow:hidden}
+.place .emoji{font-size:36px;display:block;filter:drop-shadow(2px 3px 0 #9a8658);animation:bob 3s ease-in-out infinite}.place:nth-child(2n) .emoji{animation-delay:.6s}
+.place strong{display:block;font-size:15px;margin:5px 0 2px}.place small{font-size:11px;color:#716548}
+@keyframes bob{50%{transform:translateY(-5px)}}
+.hint{text-align:center;color:#fff3d1;text-shadow:1px 2px #294332;margin:20px 0 0;font-size:12px}
+.modal{position:fixed;inset:0;z-index:30;background:#14271f9c;display:none;align-items:center;justify-content:center;padding:14px}
+.modal.open{display:flex}.window{background:linear-gradient(145deg,#fff5d9,#ead7aa);border:4px ridge #9b8051;border-radius:18px;box-shadow:0 15px 50px #14251fcc;width:min(900px,100%);max-height:90vh;overflow:auto;padding:17px;position:relative}
+.window h2{margin:0 0 4px;font-size:24px}.sub{font-size:12px;color:#746849;margin:0 0 14px}.close{position:absolute;right:12px;top:10px;border:0;background:#e1c99b;border-radius:50%;width:32px;height:32px;font-size:18px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.box{background:#fff9e9;border:1px solid #c4aa78;border-radius:12px;padding:12px}.box h3{margin:0 0 8px;font-size:16px}
+input,select,textarea{width:100%;padding:9px;border:1px solid #bba477;border-radius:8px;background:#fffdf5;color:#384636;font:inherit;margin:4px 0 8px}
+.btn{background:#59774e;color:white;border:1px solid #38553e;border-radius:9px;padding:9px 13px}.btn.alt{background:#8c7650;border-color:#665438}.btn.soft{background:#f1e2bd;color:#43513c;border:1px solid #b49a68}
+.wheelrow{display:grid;grid-template-columns:minmax(220px,360px) 1fr;gap:18px;align-items:center}
+.wheelbox{width:min(100%,350px);aspect-ratio:1;margin:auto;position:relative;touch-action:none;cursor:grab}.wheelbox:active{cursor:grabbing}canvas{width:100%;height:100%;filter:drop-shadow(0 6px 5px #4c3b2b66)}
+.pointer{position:absolute;top:-7px;left:50%;transform:translateX(-50%);z-index:2;border-left:15px solid transparent;border-right:15px solid transparent;border-top:30px solid #bd6254}
+.hub{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);border-radius:50%;width:19%;aspect-ratio:1;background:#f5e4b8;border:5px ridge #9c7d4b;display:grid;place-items:center;font-weight:bold;font-size:12px}
+.result{min-height:110px;background:#f4e7c5;border:2px dashed #b29a6d;border-radius:12px;padding:10px;margin:10px 0}
+.charpop{display:flex;align-items:center;gap:14px;animation:appear .5s cubic-bezier(.2,1.5,.4,1)}.charpop img{width:112px;height:112px;object-fit:contain;border-radius:12px;background:#f7efd9}.charpop strong{font-size:23px;color:#4c6847}
+@keyframes appear{0%{opacity:0;transform:translateY(18px) scale(.75)}100%{opacity:1;transform:none}}
+.memberlist,.rolecards,.tasklist,.logs{display:grid;gap:8px}.member,.rolecard,.taskitem,.logitem{padding:9px;background:#fffdf4;border:1px solid #c7b181;border-radius:9px}
+.rolecard{display:flex;gap:10px;align-items:center}.rolecard img{width:60px;height:60px;object-fit:contain}
+.token{display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:50%;background:#e9d19b;border:2px solid #b08f56;font-size:20px;margin:3px}
+.taskitem{display:flex;gap:8px;align-items:center}.taskitem input{width:auto;margin:0}.taskitem span{flex:1}
+.progress{height:10px;background:#ded0aa;border-radius:10px;overflow:hidden}.progress i{display:block;height:100%;background:#71915a;width:0}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}.tabs button{background:#e6d5ac;border:1px solid #b49a68;border-radius:20px;padding:7px 11px}
+.note{font-size:12px;color:#6e684f;line-height:1.5}.soundrow{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.soundrow input{width:130px}
+#toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:#294638;color:#fff3d4;border:2px solid #d3b574;border-radius:12px;padding:10px 16px;z-index:80;display:none}
+
+/* SOCIALSYNC — cozy forest pixel-world */
+:root{--ink:#344333;--cream:#f5edcf;--paper:#fff8e7;--green:#668451;--deep:#304a38;--gold:#d6ad68;--pink:#d99b8a}
+body{font-family:ui-monospace,Consolas,monospace;background:#233e32}
+#world{
+ min-height:100vh;position:relative;isolation:isolate;overflow:hidden;
+ background:#294936 url("assets/forest-world-layer.webp") center 42%/cover fixed no-repeat;
+}
+#world:before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+ background:linear-gradient(180deg,#142b2530 0%,#233b2530 48%,#1d392b55 100%);
+ animation:forestLight 16s ease-in-out infinite alternate}
+#world:after{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+ background-image:radial-gradient(circle,#ffe9a8 0 1px,transparent 2px),radial-gradient(circle,#fff3c8 0 1px,transparent 2px);
+ background-size:97px 121px,151px 173px;background-position:10px 20px,55px 80px;
+ opacity:.55;animation:fireflyDrift 24s linear infinite}
+@keyframes forestLight{from{opacity:.7;filter:saturate(.92)}to{opacity:1;filter:saturate(1.12)}}
+@keyframes fireflyDrift{to{background-position:90px -130px,-80px 210px}}
+.top{position:sticky;z-index:20;background:#263f31ed;color:#fff4d7;border-bottom:4px solid #d1ad70;box-shadow:0 4px 14px #14251f88}
+.brand{display:flex;align-items:center;gap:12px}.pixel-faces{display:flex;gap:4px}
+.pixel-faces img{width:42px;height:42px;object-fit:cover;image-rendering:pixelated;border:3px solid #f5d78e;box-shadow:3px 3px 0 #172b21;background:#f6e9c9}
+.logo{font-family:ui-monospace,monospace;letter-spacing:3px;text-shadow:2px 2px #1c3024}
+.logo small{color:#e0d9a8;letter-spacing:1.5px}
+.hud button,.pill{border-radius:5px;border:2px solid #314b36;box-shadow:2px 2px 0 #17291e;font-family:inherit}
+#mapview{max-width:1200px;min-height:calc(100vh - 65px);padding:22px 18px 44px;position:relative;z-index:1}
+.welcome{max-width:470px;margin:8px auto 22px;background:#fff5dceF;border:3px solid #826744;border-radius:7px;padding:13px 17px;text-align:center;box-shadow:6px 6px 0 #243a2c88}
+.welcome h1{font-family:ui-monospace,monospace;color:#405d3e;margin:0 0 5px;font-size:clamp(20px,4vw,29px)}
+.welcome p{font-family:Georgia,serif;color:#5c674b;margin:0;font-size:13px}
+.eyebrow{font-size:10px;color:#9a6947;letter-spacing:2px}
+.places{max-width:980px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin:0 auto}
+.place{font-family:ui-monospace,monospace;min-height:132px;padding:13px 9px;background:linear-gradient(145deg,#fff4d9ed,#e7d3a8ed);border:3px solid #72583c;border-radius:6px;box-shadow:0 6px 0 #4c3c2b,4px 10px 18px #14251f66;color:#3b4d37;position:relative;overflow:hidden;backdrop-filter:blur(2px);transition:transform .2s,filter .2s}
+.place:hover{transform:translateY(-5px) scale(1.025);filter:brightness(1.08)}
+.place .emoji{font-size:39px;display:block;filter:drop-shadow(2px 3px 0 #9b7950);animation:bob 3.2s ease-in-out infinite}
+.place:nth-child(2n) .emoji{animation-delay:.7s}
+.place strong{display:block;font-size:13px;margin:5px 0 2px;color:#354c35}
+.place small{font-size:10px;color:#6c644b}
+@keyframes bob{50%{transform:translateY(-5px)}}
+.building:before{content:"";position:absolute;top:0;left:0;right:0;height:8px;background:repeating-linear-gradient(90deg,#d5ad68 0 12px,#f1d59b 12px 24px);border-bottom:2px solid #72583c}
+.wheel-place{background:linear-gradient(#e3edcf 0 22%,#fff0c9 22%)}
+.bug-place{background:linear-gradient(#cfe3b5 0 22%,#fff0c9 22%)}
+.rock-place{background:linear-gradient(145deg,#e4efd2,#b8c99b);border-radius:26px 26px 9px 9px}
+.house-place{background:linear-gradient(#ead5a7 0 23%,#fff0d0 23%)}
+.door{display:block;margin:5px auto 0;width:24px;height:18px;background:#98684b;border:2px solid #60472f;color:#fff;font-size:10px;line-height:12px}
+.hint{font-family:Georgia,serif;color:#fff4d4;text-shadow:1px 2px #263b2b;background:#28432dcc;max-width:500px;padding:8px 12px;margin:20px auto;border:2px dashed #e1c58a;text-align:center}
+.modal{z-index:40}.window{font-family:ui-monospace,monospace;border:4px solid #72583c;border-radius:8px;box-shadow:8px 8px 0 #172b4955;background:linear-gradient(145deg,#fff9e7,#e6edcf)}
+.window h2{color:#405e3e}.close{border:2px solid #806344}
+.btn{border-radius:5px;background:#5f8050;border:2px solid #38523a;box-shadow:2px 2px 0 #29402f;font-family:inherit}
+.btn.soft{background:#f2e2b9;color:#43513c;border:2px solid #b49a68}
+.box,.result,.member,.rolecard,.taskitem,.logitem{border-radius:6px;border:2px solid #c4ae7c}
+.charpop img{image-rendering:pixelated}
+.modal.open .window{animation:cloudEnter .9s ease-out}
+@keyframes cloudEnter{0%{opacity:0;transform:translateY(22px) scale(.97)}100%{opacity:1;transform:none}}
+.cloud-flash{position:fixed;inset:-10%;z-index:39;pointer-events:none;
+ background:radial-gradient(ellipse at 20% 40%,#fff 0 12%,#f4fbebee 25%,transparent 48%),radial-gradient(ellipse at 75% 55%,#fff 0 13%,#f4fbebee 26%,transparent 49%);
+ animation:cloudFlash 2.15s ease-in-out forwards}
+@keyframes cloudFlash{0%{opacity:0;transform:scale(.86) translateY(10px)}28%{opacity:.88;transform:scale(.98) translateY(0)}72%{opacity:.82;transform:scale(1.04) translateY(-2px)}100%{opacity:0;transform:scale(1.14) translateY(-7px)}}
+.game-bug{display:inline-grid;place-items:center;width:68px;height:68px;margin:7px;border:3px solid #45623d;border-radius:50%;background:#e8f3c7;box-shadow:3px 3px 0 #34533b;font-size:34px;cursor:pointer}
+.caught{opacity:.35;filter:grayscale(1);pointer-events:none}
+.frog-button{font-size:54px;border:3px solid #38533b;border-radius:8px;background:#c5dfa8;padding:8px 20px;box-shadow:4px 4px 0 #294866}
+.pixel-result{font-size:19px;font-weight:bold;color:#405e3e;background:#fff6cf;padding:16px;border:3px dashed #c59d51;border-radius:5px;margin:12px 0}
+.catch-table{width:100%;border-collapse:collapse;margin-top:12px;background:#fffdf3;font-size:13px}
+.catch-table th,.catch-table td{border:1px solid #c8b98f;padding:8px;text-align:left}
+.catch-table th{background:#e9dfbd;color:#40543c}
+.member-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:8px 0}
+.member-controls input{max-width:95px}
+
+/* Gentle motion layers: the original forest artwork remains untouched. */
+.forest-mist{position:absolute;z-index:0;pointer-events:none;left:-15%;right:-15%;bottom:4%;height:34%;opacity:.34;
+ background:radial-gradient(ellipse at 20% 55%,#e7f0d8aa 0 8%,transparent 42%),radial-gradient(ellipse at 65% 45%,#e7f0d899 0 9%,transparent 45%),radial-gradient(ellipse at 90% 70%,#e7f0d877 0 7%,transparent 40%);
+ filter:blur(18px);animation:mistDrift 24s ease-in-out infinite alternate}
+@keyframes mistDrift{from{transform:translate3d(-3%,5px,0) scale(1)}to{transform:translate3d(4%,-12px,0) scale(1.08)}}
+.chimney-smoke{position:absolute;z-index:1;pointer-events:none;top:19%;right:17%;width:70px;height:120px;opacity:.45}
+.chimney-smoke i{position:absolute;bottom:0;left:25px;width:23px;height:23px;border-radius:50%;background:#e9efdf99;filter:blur(7px);animation:smokeRise 5s ease-out infinite}
+.chimney-smoke i:nth-child(2){left:37px;animation-delay:1.7s}.chimney-smoke i:nth-child(3){left:15px;animation-delay:3.2s}
+@keyframes smokeRise{0%{transform:translate(0,0) scale(.5);opacity:0}20%{opacity:.8}100%{transform:translate(17px,-115px) scale(2.4);opacity:0}}
+.pixel-faces img{width:46px;height:46px;object-fit:contain;image-rendering:auto;border:2px solid #f5d78e;border-radius:12px;box-shadow:3px 3px 0 #172b21;background:#e7efcf}
+.xp-pill{font-weight:bold;color:#4b5e37!important;background:#f7e9bd!important}
+.reward-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:10px}
+.reward{padding:10px 6px;text-align:center;border:2px solid #c4ae7c;border-radius:7px;background:#fff8e5;color:#526344;font-size:11px}
+.reward .reward-icon{display:block;font-size:25px;margin-bottom:4px}.reward.locked{opacity:.48;filter:grayscale(.8)}
+.cloud-flash{background:radial-gradient(ellipse at 18% 45%,#fff 0 14%,#f4fbebf2 27%,transparent 49%),radial-gradient(ellipse at 78% 58%,#fff 0 14%,#f4fbebee 28%,transparent 50%),radial-gradient(ellipse at 50% 5%,#fff 0 8%,transparent 42%)}
+@media(max-width:650px){.chimney-smoke{right:8%;top:24%}.pixel-faces img{width:32px;height:32px}.reward-grid{grid-template-columns:1fr 1fr 1fr}}
+@media(max-width:900px){.places{grid-template-columns:repeat(2,minmax(0,1fr))}}\n@media(max-width:650px){.pixel-faces img{width:29px;height:29px}.pixel-faces{gap:2px}.brand{gap:7px}.logo{font-size:16px}.logo small{font-size:8px}.places{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.place{min-height:120px}.top{align-items:flex-start;flex-direction:column}.hud{width:100%}.wheelrow,.grid{grid-template-columns:1fr}.charpop img{width:88px;height:88px}}
+
+
+/* Small location refinements: the settings nook belongs among the plants. */
+.garden-place{background:linear-gradient(145deg,#d9e9bd 0 25%,#f4edc9 25%);border-color:#627b4d}
+.garden-place:before{content:"";position:absolute;left:0;right:0;top:0;height:8px;background:repeating-linear-gradient(90deg,#9bbd72 0 12px,#d4e5a8 12px 24px);border-bottom:2px solid #627b4d}
+/* Character portraits use the uploaded originals, translated into a restrained pixel-art look. */
+.pixel-faces img{image-rendering:pixelated;object-fit:cover;object-position:center 38%;border-radius:7px}
+.tutorial-shell{background:#fff8e8;border:3px solid #8b7048;box-shadow:5px 5px 0 #354c35;border-radius:7px;padding:14px;color:#354235}
+.tutorial-stage{display:grid;grid-template-columns:116px 1fr;gap:14px;align-items:center;min-height:145px}
+.tutorial-avatar{width:112px;height:112px;object-fit:cover;image-rendering:pixelated;border:4px solid #d4b575;box-shadow:4px 4px 0 #405b3d;background:#e9efcf}.tutorial-avatar.pop-in{animation:avatarPop .32s steps(4,end)}@keyframes avatarPop{0%{opacity:0;transform:translateY(7px) scale(.94)}100%{opacity:1;transform:translateY(0) scale(1)}}
+.tutorial-speaker{font-size:10px;letter-spacing:1.5px;color:#8b7048;margin:0 0 5px}
+.tutorial-dialogue{font-family:Georgia,serif;font-size:16px;line-height:1.55;margin:0;background:#fff;border:2px solid #d8c79e;border-radius:6px;padding:13px;min-height:84px;position:relative}
+.tutorial-dialogue:before{content:"";position:absolute;left:-9px;top:30px;width:14px;height:14px;background:#fff;border-left:2px solid #d8c79e;border-bottom:2px solid #d8c79e;transform:rotate(45deg)}
+.tutorial-controls{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;margin-top:12px}
+.tutorial-progress{height:8px;background:#e5dec4;border:1px solid #c9b98f;border-radius:9px;overflow:hidden;margin:12px 0 4px}
+.tutorial-progress span{display:block;height:100%;width:25%;background:#829c61;transition:width .25s ease}
+.tutorial-caption{font-size:11px;color:#7a7159;margin:4px 0 0}
+@media(max-width:560px){.tutorial-stage{grid-template-columns:76px 1fr;gap:10px}.tutorial-avatar{width:74px;height:74px}.tutorial-dialogue{font-size:14px;padding:10px}.tutorial-dialogue:before{top:20px}.pixel-faces img{width:35px;height:35px}}
+
+
+/* Distinct explorable locations on the home map */
+.world-zone{max-width:1040px;margin:18px auto 22px;padding:14px 16px 17px;border:3px solid #526d48;border-radius:10px;box-shadow:5px 6px 0 #203a2d88;position:relative;overflow:hidden}
+.garden-zone{background:linear-gradient(145deg,#c9dfa9ed,#e8edc9ed);border-color:#5c7948}
+.house-zone{background:linear-gradient(145deg,#d7bd8bed,#f5e5c4ed);border-color:#806044}
+.tutorial-zone{background:linear-gradient(145deg,#b9d2b5ed,#e4edcfed);border-color:#58765c}
+.zone-heading{display:flex;align-items:center;gap:10px;margin:0 0 12px;color:#314c35;font-family:ui-monospace,monospace}
+.zone-heading>span{font-size:30px;filter:drop-shadow(2px 2px 0 #fff4d4)}
+.zone-heading b{display:block;font-size:13px;letter-spacing:1px}.zone-heading small{display:block;font:11px Georgia,serif;color:#53664b;margin-top:3px}
+.world-zone .places{max-width:none;margin:0;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.world-zone .place{min-height:122px}.tutorial-place-grid{grid-template-columns:minmax(190px,280px)!important}
+.tutorial-place{background:linear-gradient(145deg,#e4edce,#fff3d5);border-color:#6d8052}
+.pixel-faces img{object-fit:cover;image-rendering:pixelated;image-rendering:crisp-edges;border-radius:7px;object-position:center}
+.tutorial-avatar{object-fit:cover;object-position:center;border-radius:6px;image-rendering:pixelated;image-rendering:crisp-edges}
+@media(max-width:650px){.world-zone{margin:14px 8px;padding:12px}.world-zone .places{grid-template-columns:repeat(2,minmax(0,1fr))}.tutorial-place-grid{grid-template-columns:minmax(0,1fr)!important}}
+/* SOCIALSYNC EMAIL WELCOME SCREEN */
+#welcomeScreen {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background:
+    linear-gradient(rgba(12, 35, 23, 0.55), rgba(12, 35, 23, 0.75)),
+    url("assets/forest-world-layer.webp") center / cover no-repeat;
+}
+
+.welcome-card {
+  width: min(100%, 420px);
+  padding: 35px 25px;
+  text-align: center;
+  background: #f5edcf;
+  border: 5px solid #795638;
+  border-radius: 16px;
+  box-shadow: 0 10px 0 #493522;
+}
+
+.welcome-card h1 {
+  color: #315b38;
+  font-size: 30px;
+  margin: 0 0 12px;
+}
+
+.welcome-card p {
+  color: #68543c;
+  margin-bottom: 22px;
+}
+
+.welcome-card input {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 14px;
+  margin-bottom: 14px;
+  border: 2px solid #9a8058;
+  border-radius: 8px;
+  font-size: 15px;
+}
+
+.welcome-card button {
+  width: 100%;
+  padding: 14px;
+  border: 0;
+  border-radius: 8px;
+  background: #426d45;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+/* MAGICAL SOCIALSYNC WELCOME DESIGN */
+#welcomeScreen {
+  background:
+    radial-gradient(circle at 20% 20%, rgba(225, 205, 132, .2), transparent 25%),
+    radial-gradient(circle at 80% 75%, rgba(144, 184, 111, .2), transparent 30%),
+    linear-gradient(rgba(15, 38, 24, .45), rgba(15, 38, 24, .75)),
+    url("assets/forest-world-layer.webp") center / cover no-repeat;
+}
+
+.welcome-card {
+  position: relative;
+  overflow: hidden;
+  border: 4px solid #a58a58;
+  border-radius: 22px;
+  box-shadow: 0 0 30px rgba(238, 218, 151, .35), 0 12px 0 #493522;
+  animation: welcomeFloat 3s ease-in-out infinite;
+}
+
+.welcome-card::before {
+  content: "🌿 ✦ 🍄 ✦ 🌿";
+  display: block;
+  color: #59764d;
+  font-size: 23px;
+  margin-bottom: 16px;
+}
+
+.welcome-card::after {
+  content: "✦  ✧  ✦";
+  display: block;
+  color: #c9a45e;
+  font-size: 20px;
+  margin-top: 18px;
+}
+
+.welcome-card h1 {
+  letter-spacing: 2px;
+  text-shadow: 2px 2px #d9c99e;
+}
+
+.welcome-card input:focus {
+  outline: 3px solid #9ab47b;
+  border-color: #59764d;
+}
+
+.welcome-card button {
+  box-shadow: 0 5px 0 #294a30;
+  transition: .2s ease;
+}
+
+.welcome-card button:hover {
+  background: #59764d;
+  transform: translateY(-2px);
+}
+
+@keyframes welcomeFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+/* ENCHANTED FAIRY WELCOME DESIGN */
+.welcome-card {
+  position: relative;
+  border: 5px solid #b58b50;
+  outline: 3px solid #e8d5a3;
+  outline-offset: 5px;
+  border-radius: 22px;
+  background:
+    radial-gradient(circle at top left, #fff9df, transparent 45%),
+    linear-gradient(145deg, #fff8e5, #e9edcf);
+  box-shadow:
+    0 0 0 9px rgba(224, 194, 127, .35),
+    0 12px 0 #493522,
+    0 0 35px rgba(255, 235, 170, .6);
+}
+
+.welcome-card::before {
+  content: "✦  ❀  ✧  ❀  ✦";
+  position: absolute;
+  top: 9px;
+  left: 0;
+  right: 0;
+  color: #b18b4d;
+  font-size: 19px;
+  letter-spacing: 9px;
+  pointer-events: none;
+}
+
+.welcome-card::after {
+  content: "❀";
+  position: absolute;
+  bottom: 8px;
+  left: 0;
+  right: 0;
+  color: #b18b4d;
+  font-size: 20px;
+  pointer-events: none;
+}
+
+.welcome-card h1 {
+  text-shadow: 1px 2px 0 #d8c99d;
+}
+
+.welcome-card input {
+  background: #fffdf3;
+  border: 2px solid #b7a078;
+  border-radius: 12px;
+}
+
+.welcome-card input:focus {
+  outline: 3px solid #c5d5a6;
+  border-color: #59764d;
+}
+
+.welcome-card button {
+  border: 2px solid #b18b4d;
+  border-radius: 12px;
+  box-shadow: 0 4px 0 #294a31;
+  transition: transform .2s, box-shadow .2s;
+}
+
+.welcome-card button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 7px 0 #294a31;
+}

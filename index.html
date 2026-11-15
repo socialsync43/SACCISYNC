@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SOCIALSYNC — Forest Pixel World</title>
+<link rel="stylesheet" href="styles.css"></head>
+<body>
+<div id="welcomeScreen">
+  <div class="welcome-card">
+    <h1>🌿 SOCIALSYNC</h1>
+    <p>Welcome to your little teamwork world!</p>
+    <input type="email" id="socialEmail" placeholder="Enter your SocialSync email">
+    <button onclick="enterSocialSync()">ENTER SOCIALSYNC ✨</button>
+  </div>
+</div>
+<div id="world"><div class="forest-mist" aria-hidden="true"></div><div class="chimney-smoke" aria-hidden="true"><i></i><i></i><i></i></div>
+<header class="top"><div class="brand"><div class="pixel-faces" aria-label="SOCIALSYNC game characters"><img data-creature="raina" alt="Raina pixel game character"><img data-creature="lysandra" alt="Lysandra pixel game character"><img data-creature="andrew" alt="Andrew pixel game character"><img data-creature="khim" alt="Khim pixel game character"></div><div class="logo">SOCIALSYNC <small>PIXEL WORLD • TEAMWORK • EVERY VOICE MATTERS</small></div></div>
+<div class="hud"><span class="pill" id="teamPill">🌼 5 learners</span><span class="pill xp-pill" id="xpPill">⭐ 0 XP · Lv 1</span><button onclick="zoom(-.1)">−</button><span id="zoomLabel">100%</span><button onclick="zoom(.1)">＋</button><button onclick="openPanel('settings')">⚙</button><button onclick="toggleMusic()" id="musicBtn">♫ Music off</button></div></header>
+<main id="mapview"><div class="welcome"><span class="eyebrow">✦ YOUR CLASSROOM ADVENTURE ✦</span><h1>Welcome to SocialSync!</h1><p>Explore the garden, step inside the team house, or visit the tutorial trail to begin your adventure.</p></div>
+<section class="world-zone garden-zone"><div class="zone-heading"><span>🌿</span><div><b>THE SETTINGS GARDEN</b><small>Leafy paths, sharing spots & sound settings</small></div></div><div class="places pixel-places">
+<button class="place garden-place" onclick="travelTo('settings')"><span class="emoji">🌱</span><strong>Settings Garden</strong><small>Group, roles & sound</small></button>
+<button class="place rock-place" onclick="travelTo('pond')"><span class="emoji">🪷</span><strong>Lily Pad Prompts</strong><small>Pick a fresh sharing prompt</small></button>
+<button class="place garden-place" onclick="travelTo('voice')"><span class="emoji">🪨</span><strong>Voice Pebbles</strong><small>Give everyone a turn</small></button>
+</div></section>
+<section class="world-zone house-zone"><div class="zone-heading"><span>🏡</span><div><b>THE TEAM HOUSE & WORKSHOP</b><small>All your teamwork tools are kept inside</small></div></div><div class="places pixel-places">
+<button class="place building house-place wheel-place" onclick="travelTo('wheel')"><span class="emoji">🎡</span><strong>Role Spinner</strong><small>Main attraction • no repeats</small><span class="door">▥</span></button>
+<button class="place building house-place bug-place" onclick="travelTo('bugs')"><span class="emoji">🐸</span><strong>Frog & Bug Catcher</strong><small>Catch each name once</small><span class="door">▥</span></button>
+<button class="place house-place" onclick="travelTo('records')"><span class="emoji">📚</span><strong>Field Journal</strong><small>Keep kind participation notes</small><span class="door">▥</span></button>
+<button class="place house-place" onclick="travelTo('quests')"><span class="emoji">📜</span><strong>Quest Board</strong><small>Team tasks & progress</small><span class="door">▥</span></button>
+</div></section>
+<section class="world-zone tutorial-zone"><div class="zone-heading"><span>🗺️</span><div><b>THE TUTORIAL TRAIL</b><small>Meet the four guides and learn how to explore</small></div></div><div class="places pixel-places tutorial-place-grid">
+<button class="place tutorial-place" onclick="travelTo('guide')"><span class="emoji">🎮</span><strong>Team Guide</strong><small>Meet Raina, Lysandra, Andrew & Khim</small></button>
+</div></section>
+<p class="hint">☁️ Follow the forest paths — each little place opens with a gentle cloud-travel transition ✦</p></main></div>
+<div class="modal" id="modal"><div class="window"><button class="close" onclick="closePanel()">×</button><div id="panelContent"></div></div></div><div id="toast"></div>
+<script src="script.js"></script></body></html>
